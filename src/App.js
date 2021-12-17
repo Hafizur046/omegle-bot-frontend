@@ -1,7 +1,8 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 const { io } = require("socket.io-client");
-const socket = io("http://165.232.176.178:3000");
+//const socket = io("http://165.232.176.178:3000");
+const socket = io("http://192.168.0.4:3000");
 
 function App() {
   const [messages, setMessages] = useState([]);
