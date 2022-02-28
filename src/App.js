@@ -6,23 +6,25 @@ const socket = io("http://192.168.0.4:3000");
 
 function App() {
   const [messages, setMessages] = useState([]);
-  const [pushToMessages, setPushToMessages] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [messageInput, setMessageInput] = useState("");
 
   useEffect(() => {
-    if (pushToMessages === "") return;
-    setMessages([pushToMessages, ...messages]);
-    setPushToMessages("");
-  }, [pushToMessages, messages]);
-
-  useEffect(() => {
     socket.on("message", (msg) => {
-      setPushToMessages(msg);
+      setIsTyping(false);
+      setMessages((currentMessages) => [msg, ...currentMessages]);
+    });
+    socket.on("started-typing", () => {
+      setIsTyping(true);
+    });
+    socket.on("stopped-typing", () => {
+      setIsTyping(false);
     });
   }, []);
 
   return (
     <div className="App">
+      <h4>{isTyping && "Stranger: Typing...."}</h4>
       {messages.map((message) => (
         <h4>{message}</h4>
       ))}
@@ -49,34 +51,11 @@ function App() {
         }}
         onKeyUp={(e) => {
           if (e.key === "Enter") {
-            //setPushToMessages(`You: ${messageInput}`);
             socket.emit("message", messageInput);
             setMessageInput("");
           }
         }}
       />
-      {/*<button
-        style={{
-          width: "20vw",
-          height: "6vh",
-          border: "none",
-          position: "fixed",
-          //top: "95vh",
-          bottom: 0,
-          left: "82vw",
-          background: "#000",
-          color: "#fff",
-          border: "none",
-          outline: "none",
-        }}
-        onClick={() => {
-          //setPushToMessages(`You: ${messageInput}`);
-          socket.emit("message", messageInput);
-          setMessageInput("");
-        }}
-      >
-        Send
-        </button>*/}
     </div>
   );
 }
