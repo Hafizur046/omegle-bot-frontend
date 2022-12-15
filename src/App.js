@@ -1,8 +1,12 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-const { io } = require("socket.io-client");
-//const socket = io("http://165.232.176.178:3000");
-const socket = io("http://192.168.0.4:3000");
+import { io } from "socket.io-client";
+const URI =
+  process.env["URI"] ||
+  (process.env["ENVIRONMENT"] === "hafizur-gentoo"
+    ? "http://192.168.0.6:3000"
+    : "http://localhost:3000");
+const socket = io(URI);
 
 function App() {
   const [messages, setMessages] = useState([]);
